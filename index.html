@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0CC0DF; /* Background color */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 40%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow */
+            padding: 20px;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 5px solid #0CC0DF; /* Outer blue border color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .qa-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .question {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .answer {
+            font-size: 1.2em;
+            color: #555;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Text shadow */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="quizImage" src="https://i.imgur.com/nYrAzFj.png" alt="Quiz Image">
+        <div class="qa-box">
+            <div id="question" class="question">Click the image to get a question!</div>
+            <div id="answer" class="answer"></div>
+        </div>
+    </div>
+    
+    <script>
+        const questionsAndAnswers = [
+            { question: "What is the central theme of 'Chernobyl'?", answer: "The series dramatizes the events surrounding the Chernobyl nuclear disaster of 1986." },
+            { question: "Who stars as the lead in 'The Queen's Gambit'?", answer: "Anya Taylor-Joy plays the lead role of Beth Harmon." },
+            { question: "What historical event is depicted in 'Band of Brothers'?", answer: "The series follows the experiences of Easy Company during World War II." },
+            { question: "What is the setting for 'Big Little Lies'?", answer: "The series is set in Monterey, California." },
+            { question: "Which novel is 'The Haunting of Hill House' based on?", answer: "It is based on the novel of the same name by Shirley Jackson." },
+            { question: "What is the plot of 'When They See Us'?", answer: "The series recounts the story of the Central Park Five and their wrongful conviction." },
+            { question: "Who is the creator of 'True Detective'?", answer: "Nic Pizzolatto is the creator of the series." },
+            { question: "In 'The Night Of', what crime is the main character accused of?", answer: "He is accused of murder." },
+            { question: "What is 'The Queen's Gambit' about?", answer: "It is about a young chess prodigy navigating her rise to fame in a male-dominated world." },
+            { question: "Which limited series portrays the life of Elizabeth Holmes?", answer: "The series 'The Dropout' focuses on Elizabeth Holmes and the Theranos scandal." },
+            { question: "What is the focus of 'Olive Kitteridge'?", answer: "It follows the life and relationships of a retired schoolteacher in a small town." },
+            { question: "Who stars as the protagonist in 'The Undoing'?", answer: "Nicole Kidman plays the lead role in the series." },
+            { question: "What crime is central to 'The People v. O.J. Simpson'?", answer: "The series focuses on the O.J. Simpson murder trial." },
+            { question: "What historical figure is the focus of 'John Adams'?", answer: "The series portrays the life of John Adams, the second President of the United States." },
+            { question: "What is 'Unorthodox' about?", answer: "It tells the story of a young woman who leaves her ultra-Orthodox Jewish community." },
+            { question: "Which series is set during the Vietnam War?", answer: "The series 'The Vietnam War' is a documentary exploring the Vietnam War." },
+            { question: "What is the premise of 'I Know This Much Is True'?", answer: "It centers on a man dealing with his brother's mental illness and their family history." },
+            { question: "What event does 'The Looming Tower' depict?", answer: "It explores the events leading up to the September 11 attacks." },
+            { question: "Who plays the lead role in 'Mare of Easttown'?", answer: "Kate Winslet stars as the lead character, Mare Sheehan." },
+            { question: "What is the central plot of 'Waco'?", answer: "The series dramatizes the 1993 standoff between the FBI and the Branch Davidians in Waco, Texas." },
+            { question: "What is the focus of 'The Pacific'?", answer: "It is a companion series to 'Band of Brothers' and follows Marines in the Pacific Theater of World War II." },
+            { question: "Who stars in 'A Very English Scandal'?", answer: "Hugh Grant and Ben Whishaw star in the series." },
+            { question: "What historical event is covered in 'The Crown'?", answer: "The series covers the reign of Queen Elizabeth II." },
+            { question: "Which book is 'Little Fires Everywhere' based on?", answer: "It is based on the novel by Celeste Ng." },
+            { question: "What is the plot of 'Chernobyl'?", answer: "The series depicts the events and consequences of the Chernobyl nuclear disaster." },
+            { question: "What is 'The Marvelous Mrs. Maisel' about?", answer: "It follows a housewife who pursues a career in stand-up comedy in the 1950s." },
+            { question: "Who stars in 'The Act'?", answer: "Patricia Clarkson and Joey King star in this true-crime drama." },
+            { question: "What series is based on the novel 'Sharp Objects'?", answer: "The series 'Sharp Objects' is based on Gillian Flynn's novel." },
+            { question: "What is 'The Terror' about?", answer: "It is a historical horror series based on the ill-fated Franklin Expedition in the Arctic." },
+            { question: "What is the main theme of 'Fargo'?", answer: "The series explores crime and moral ambiguity in the American Midwest." },
+            { question: "What limited series stars Hugh Jackman as a lawyer?", answer: "The series 'Bad Education' features Hugh Jackman as a corrupt school superintendent." },
+            { question: "What is the premise of 'The Night Manager'?", answer: "It follows a former soldier who infiltrates the inner circle of an international arms dealer." },
+            { question: "Which series follows a group of high school friends in the 1980s?", answer: "The series 'The Goldbergs' is set in the 1980s and follows a family and their friends." },
+            { question: "What is the central conflict in 'The Jinx: The Life and Deaths of Robert Durst'?", answer: "It examines the life and crimes of real estate heir Robert Durst." },
+            { question: "Who stars in 'The Big Sky'?", answer: "Kylie Bunbury and Ryan Phillippe star in this crime drama series." },
+            { question: "What is the plot of 'Defending Jacob'?", answer: "It centers on a family dealing with the accusation that their son is a murderer." },
+            { question: "What is 'The Investigation' about?", answer: "The series details the real-life investigation into the murder of journalist Kim Wall." },
+            { question: "What series depicts the story of a family-run funeral home?", answer: "'Six Feet Under' is set in a family-owned funeral home and explores its members' lives." },
+            { question: "Who plays the lead role in 'Godless'?", answer: "Michelle Dockery stars in this western miniseries." },
+            { question: "What event does 'The Long Road Home' focus on?", answer: "It covers the events of the 2004 ambush in Sadr City, Iraq." },
+            { question: "What series is set in the world of competitive ballroom dancing?", answer: "'Dance Dreams: Hot Chocolate Nutcracker' explores the world of the Debbie Allen Dance Academy." },
+            { question: "What is 'The Good Lord Bird' about?", answer: "It follows the life of John Brown, an abolitionist during the pre-Civil War era." },
+            { question: "Which limited series focuses on the life of a troubled young man in the 1990s?", answer: "'A Teacher' explores the impact of a relationship between a high school teacher and her student." },
+            { question: "What is the plot of 'Nine Perfect Strangers'?", answer: "The series follows a group of individuals who attend a wellness center run by a mysterious woman." },
+            { question: "What is 'The Spy' about?", answer: "It is based on the real-life story of Israeli spy Eli Cohen." },
+            { question: "Who stars as the lead in 'The Plot Against America'?", answer: "Zoe Kazan stars in this alternate history miniseries." },
+            { question: "What historical figure does 'The King' depict?", answer: "The series is a historical drama about King Henry V of England." },
+            { question: "What is the focus of 'Little Drummer Girl'?", answer: "It is about a young actress recruited by Israeli intelligence to infiltrate a Palestinian terrorist group." },
+            { question: "Which series is a retelling of the famous 1970s cult TV series?", answer: "'The Brady Bunch' is revived in 'The Brady Bunch Variety Hour.'" },
+            { question: "What is the setting of 'The Pacific'?", answer: "The series is set in the Pacific Theater of World War II." },
+            { question: "What is 'The Fall' about?", answer: "It follows a detective hunting a serial killer in Belfast." },
+            { question: "What is the premise of 'The Sinner'?", answer: "The series follows a detective as he investigates seemingly inexplicable violent crimes." },
+            { question: "Who stars as the lead in 'The Escape Artist'?", answer: "David Tennant stars as a barrister caught up in a high-profile case." },
+            { question: "What series portrays the experiences of a teacher in a tough school?", answer: "'Educating Rita' is about a woman who returns to education to better herself." },
+            { question: "What is 'The Americans' about?", answer: "It follows two KGB spies posing as an American married couple during the Cold War." },
+            { question: "Which limited series focuses on the story of the infamous Menendez brothers?", answer: "'Law & Order True Crime: The Menendez Murders' tells the story of the murder case." },
+            { question: "What is the focus of 'True Detective'?", answer: "Each season features a new mystery and set of characters in a crime drama format." },
+            { question: "What series follows a group of prisoners in a remote Australian facility?", answer: "'Wentworth' explores life in a women's prison." },
+            { question: "What is the setting of 'The Outsider'?", answer: "The series is set in a small town dealing with the aftermath of a horrific crime." },
+            { question: "Who stars in 'The New Pope'?", answer: "Jude Law and John Malkovich star in this drama about the Vatican." },
+            { question: "What is the central plot of 'Fargo'?", answer: "The series is inspired by the Coen Brothers' film and explores crime in the Midwest." },
+            { question: "What is 'The Luminaries' about?", answer: "It follows a young prospector's adventures during the 1860s New Zealand gold rush." },
+            { question: "What series centers on the murder trial of a wealthy family?", answer: "'The Staircase' is a true-crime series exploring the trial of Michael Peterson." },
+            { question: "What is the premise of 'A Very English Scandal'?", answer: "It details the real-life scandal involving British politician Jeremy Thorpe." },
+            { question: "What is 'The Life and Times of Jeff Bezos' about?", answer: "It explores the rise of Amazon founder Jeff Bezos." },
+            { question: "What is the plot of 'The Night Manager'?", answer: "It follows an ex-soldier who infiltrates the world of arms dealing." },
+            { question: "What is 'Maniac' about?", answer: "It follows two strangers who participate in a mysterious drug trial." },
+            { question: "What is the setting of 'Top of the Lake'?", answer: "The series is set in remote New Zealand." },
+            { question: "What is 'The End of the F***ing World' about?", answer: "It follows two troubled teens on a road trip." },
+            { question: "What series follows a journalist uncovering a political scandal?", answer: "'The Report' covers the investigation into the CIA's use of torture." },
+            { question: "What is the focus of 'The Alienist'?", answer: "It explores the investigation of a serial killer in late 19th century New York." },
+            { question: "Who stars in 'American Crime Story: The Assassination of Gianni Versace'?", answer: "Edgar Ramirez, Darren Criss, and Penelope Cruz star in this true-crime series." },
+            { question: "What is 'The Path' about?", answer: "It follows a family involved in a controversial religious movement." },
+            { question: "What is the setting for 'Good Omens'?", answer: "The series is set in modern-day England and follows an angel and demon working to prevent the apocalypse." }
+        ];
+
+        let currentQuestionIndex = -1;
+
+        function getRandomQuestion() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * questionsAndAnswers.length);
+            } while (newIndex === currentQuestionIndex);
+            currentQuestionIndex = newIndex;
+            return questionsAndAnswers[newIndex];
+        }
+
+        document.getElementById('quizImage').addEventListener('click', function() {
+            const { question, answer } = getRandomQuestion();
+            document.getElementById('question').innerText = question;
+            document.getElementById('answer').innerText = answer;
+        });
+    </script>
+</body>
+</html>
